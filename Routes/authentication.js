@@ -2,52 +2,77 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const user = require('../Schema/user');
-const saltRounds = 10;
 const router = express.Router()
 
-router.post('/signup', (req, res) => {
-    bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
-        if (err) {
-            return res.status(500).send(err)
+router.post('/signup', (req, res, next) => {
+    user.find({ email: req.body.email }).then(data => {
+        if (data.length >= 1) {
+            return res.status(409).json({
+                message: 'user exists'
+            })
         } else {
-            user.find({ email: req.body.email }).then(data => {
-                if (data.length === 0) {
-                    user.create({ email: req.body.email, password: hash }).then(data => {
-                        let token = jwt.sign({
-                            id: data._id,
-                            password: data.password
-                        }, 'secret', { expiresIn: '1h' });
-                        //let decoded = jwt.decode(token);
-                        res.send(token);
-                    })
+            bcrypt.hash(req.body.password, 10, (err, hash) => {
+                if (err) {
+                    return res.status(500).json({
+                        error: err
+                    });
                 } else {
-                    return res.status(409).json({
-                        message: "user already exists"
+                    user.create({
+                        email: req.body.email,
+                        password: hash,
+                    }).then(data => {
+                        const token = jwt.sign({
+                            email: data.email,
+                            userId: data._id
+                        }, "secret",
+                            {
+                                expiresIn: "1h"
+                            })
+                        return res.status(200).json({
+                            message: 'User Created',
+                            token: token,
+                        })
+                    }).catch(err => {
+                        res.status(500).json({
+                            error: err
+                        })
                     })
                 }
             })
         }
-    });
+    })
 })
 
 
-router.post('/login', (req, res) => {
+router.post('/login', (req, res, next) => {
     user.find({ email: req.body.email }).then(data => {
-        if (data.length >= 1) {
-            bcrypt.compare(req.body.password, data[0].password, function (err, result) {
-                if (result === true) {
-                    let token = jwt.sign({
-                        id: data[0]._id,
-                        password: data[0].password
-                    }, 'secret', { expiresIn: '1h' });
-                    res.send(token);
-                } else {
-                    res.status(404).json({ message: "not found" })
-                }
+        if (data.length < 1) {
+            return res.status(401).json({
+                message: 'Auth Failed'
             })
-        } else {
-            res.status(404).json({ message: "not found" })
         }
+        bcrypt.compare(req.body.password, data[0].password, (err, result) => {
+            if (err) {
+                return res.status(401).json({
+                    message: 'Auth Failed',
+                })
+            }
+            if (result) {
+                const token = jwt.sign({
+                    email: data[0].email,
+                    user_id: data[0]._id
+                }, "secret",
+                    {
+                        expiresIn: "1h"
+                    })
+                return res.status(200).json({
+                    message: 'Auth Sucess',
+                    token: token,
+                })
+            } return res.status(401).json({
+                message: 'Auth Failed'
+            })
+        })
     })
 })
 
