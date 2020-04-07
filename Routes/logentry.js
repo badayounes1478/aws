@@ -53,7 +53,6 @@ router.delete('/log/:id', (req, res) => {
       return res.status(404).json({ message: "record not found" });
     } else {
       logs.deleteOne({ _id: req.params.id }).then(data => {
-        console.log(data1)
         let n = data1[0].images.length
         for (let index = 0; index < n; index++) {
           fs.unlinkSync(data1[0].images[index])
