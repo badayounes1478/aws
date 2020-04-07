@@ -31,14 +31,15 @@ router.post('/log', upload, (req, res) => {
   })
   req.body.images = name
   logs.create(req.body).then(data => {
-      res.send(data)
+    res.send(data)
+  }).catch(err => {
+    res.status(500).json({ message: err })
   })
-
 })
 
 //getting all logs
-router.get('/log',(req, res) => {
-  logs.find({}).then(data =>{
+router.get('/log', (req, res) => {
+  logs.find({}).then(data => {
     res.send(data)
   })
 })
