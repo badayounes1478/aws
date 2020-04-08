@@ -21,19 +21,17 @@ const upload = multer({ storage: storage }).array('photos', 10)
 
 //uploading the log information
 router.post('/log', upload, (req, res) => {
-
   const file = req.files
   if (!file) {
     const error = new Error('Please upload a file')
     res.status(400).send(error)
   }
-
   const name = file.map(data => {
     return data.destination + data.filename
   })
   req.body.images = name
   logs.create(req.body).then(data => {
-    res.send(data)
+    res.status(201).json({ message: 'created' })
   }).catch(err => {
     res.status(500).json({ message: err })
   })
@@ -41,9 +39,14 @@ router.post('/log', upload, (req, res) => {
 
 //getting all logs
 router.get('/log', (req, res) => {
-  logs.find({}).then(data => {
-    res.send(data)
-  })
+  const pagination = req.query.pagination ? parseInt(req.query.pagination) : 5;
+  const page = req.query.page ? parseInt(req.query.page) : 1
+  logs.find({})
+    .skip((page - 1) * pagination)
+    .limit(pagination)
+    .then(data => {
+      res.send(data)
+    })
 })
 
 //delete the folder
@@ -61,6 +64,12 @@ router.delete('/log/:id', (req, res) => {
       })
     }
   })
+})
+
+router.get('/uploads/:path', (req, res) => {
+  const file = fs.createReadStream("uploads/"+req.params.path)
+  res.writeHead(206, { 'Content-Type': 'image/jpg' });
+  file.pipe(res);
 })
 
 

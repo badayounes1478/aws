@@ -28,7 +28,7 @@ router.post('/signup', (req, res, next) => {
                             {
                                 expiresIn: "1h"
                             })
-                        return res.status(200).json({
+                        return res.status(201).json({
                             message: 'User Created',
                             token: token,
                         })
