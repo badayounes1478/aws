@@ -1,7 +1,7 @@
 const logs = require('../Schema/logentry');
 const fs = require("fs");
 
-const addLog = async (req, res) => {
+const addLog =  (req, res) => {
     const file = req.files
     if (!file) {
         const error = new Error('Please upload a file')
@@ -18,7 +18,7 @@ const addLog = async (req, res) => {
     })
 }
 
-const getLogAsPerPage = async (req, res) => {
+const getLogAsPerPage =  (req, res) => {
     const pagination = req.query.pagination ? parseInt(req.query.pagination) : 5;
     const page = req.query.page ? parseInt(req.query.page) : 1
     logs.find({})
@@ -29,7 +29,7 @@ const getLogAsPerPage = async (req, res) => {
       })
   }
 
-  const deleteLogAndImages = async (req, res) => {
+  const deleteLogAndImages =  (req, res) => {
     logs.find({ _id: req.params.id }).then(data1 => {
       if (data1.length === 0) {
         return res.status(404).json({ message: "record not found" });
@@ -45,7 +45,7 @@ const getLogAsPerPage = async (req, res) => {
     })
   }
 
-  const sendImageData = async (req, res) => {
+  const sendImageData =  (req, res) => {
     const file = fs.createReadStream("uploads/" + req.params.path)
     res.writeHead(206, { 'Content-Type': 'image/jpg' });
     file.pipe(res);

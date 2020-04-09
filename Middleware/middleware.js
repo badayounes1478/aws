@@ -34,6 +34,8 @@ const jwt = require('jsonwebtoken');
       cb(null, uniqueSuffix + '-' + file.originalname)
     }
   })
+
+
   const upload = multer({ storage: storage }).array('photos', 10)
 
 
