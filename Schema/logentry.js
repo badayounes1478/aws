@@ -5,7 +5,7 @@ const Logs = new schema({
     user_name: { 
         type: String 
     },
-    state: {
+    country: {
         type: String,
         required: true
     },
