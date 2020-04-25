@@ -1,7 +1,6 @@
 const express = require('express');
 const {dislikeLog ,likeLog ,addLog, getLogAsPerPage, deleteLogAndImages, sendImageData } = require('../controller/logentry')
 const { verifyToken, upload } = require('../Middleware/middleware')
-const logs = require('../Schema/logentry');
 const router = express.Router();
 
 
