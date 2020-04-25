@@ -1,5 +1,5 @@
 const express = require('express');
-const { addLog, getLogAsPerPage, deleteLogAndImages, sendImageData } = require('../controller/logentry')
+const {dislikeLog ,likeLog ,addLog, getLogAsPerPage, deleteLogAndImages, sendImageData } = require('../controller/logentry')
 const { verifyToken, upload } = require('../Middleware/middleware')
 const logs = require('../Schema/logentry');
 const router = express.Router();
@@ -18,10 +18,10 @@ router.delete('/log/:id', verifyToken, deleteLogAndImages)
 router.get('/uploads/:path', sendImageData)
 
 //like the log
-router.put('like/:logid/:userid', verifyToken, likeLog)
+router.put('/like/:logid/:userid', likeLog)
 
 //unlike the log
-router.put('/dislike/:logid/:userid', verifyToken, dislikeLog)
+router.put('/dislike/:logid/:userid', dislikeLog)
 
 
 
