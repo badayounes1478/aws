@@ -25,7 +25,7 @@ const signupController = (req, res) => {
                             userId: data._id
                         }, "secret",
                             {
-                                expiresIn: "1h"
+                                expiresIn: "5h"
                             })
                         return res.status(201).json({
                             message: 'User Created',

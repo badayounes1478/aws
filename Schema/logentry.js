@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 const schema = mongoose.Schema
 
 const Logs = new schema({
-    user_name: { 
-        type: String 
+    user_name: {
+        type: String
     },
     country: {
         type: String,
@@ -25,7 +25,9 @@ const Logs = new schema({
         type: Date,
         default: Date.now
     },
-    images:[String]
+    images: [String],
+    likedby: [String],
+    likes: { type: Number, default: 0 }
 })
 
 module.exports = mongoose.model('Logs', Logs)
